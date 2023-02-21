@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/lv"
+
+>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="@string/name"
+    android:layout_marginStart="@dimen/margin_10dp"
+    android:layout_marginEnd="@dimen/margin_10dp"
+    android:layout_marginTop="@dimen/margin_10dp"
+    android:textSize="@dimen/margin_30sp"
+    android:id="@+id/tvName"/>
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/address"
+        android:layout_marginStart="@dimen/margin_10dp"
+        android:textSize="@dimen/size_30sp"
+        />
+
+    <TextView
+        android:id="@+id/tvPhonNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/phonNo"
+        android:textSize="@dimen/size_30sp"
+        android:layout_marginStart="@dimen/margin_10dp"
+        />
+</LinearLayout>
