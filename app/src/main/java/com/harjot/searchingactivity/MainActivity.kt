@@ -98,9 +98,9 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
         }else{
             dialogBinding.tvText.setText("Update Item")
             dialogBinding.btnUpdate.setText("Update")
-            dialogBinding.etItemName.setText(arrayList[position].name)
-            dialogBinding.etAddress.setText(arrayList[position].address)
-            dialogBinding.etPhonNo.setText(arrayList[position].phoneNo)
+            dialogBinding.etItemName.setText(showList[position].name)
+            dialogBinding.etAddress.setText(showList[position].address)
+            dialogBinding.etPhonNo.setText(showList[position].phoneNo)
         }
 //        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
@@ -125,19 +125,19 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
             }
             else {
                 if(position > -1) {
-                    arrayList[position] = (UserModel(
+                    showList[position] = (UserModel(
                         dialogBinding.etItemName.text.toString(),
                         dialogBinding.etAddress.text.toString(),
                         dialogBinding.etPhonNo.text.toString()
                     ))
                 }
                 else{
+                    showList.clear()
                     arrayList.add(UserModel(
                         dialogBinding.etItemName.text.toString(),
                         dialogBinding.etAddress.text.toString(),
                         dialogBinding.etPhonNo.text.toString()
                     ))
-                    showList.clear()
                     showList.addAll(arrayList)
                 }
                 adapter.notifyDataSetChanged()
