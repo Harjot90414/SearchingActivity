@@ -1,6 +1,8 @@
 package com.harjot.searchingactivity
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -16,6 +18,7 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
     lateinit var adapter:RecyclerAdapterClass
     var arrayList= ArrayList<UserModel>()
     var showList= ArrayList<UserModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -35,101 +38,55 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
         }
 
 
-        binding.rbName.setOnClickListener {
-            binding.etSearch.doOnTextChanged { text, start, before, count ->
-
-                binding.btnSearch.setOnClickListener {
-                    if (arrayList.count() == 0) {
-                        Toast.makeText(this, "Enter List", Toast.LENGTH_SHORT).show()
-                        binding.etSearch.error = "Enter List"
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            var textLength = text?.length ?: 0
+            if (textLength == 0) {
+                showList.clear()
+                showList.addAll(arrayList)
+                adapter.notifyDataSetChanged()
+            } else if (arrayList.isNullOrEmpty()) {
+                Toast.makeText(this, "Empty List", Toast.LENGTH_SHORT).show()
+                binding.etSearch.setError("Add Item In list")
+            } else if (textLength > 2) {
+                var filteredList = ArrayList<UserModel>()
+                when (binding.rg.checkedRadioButtonId) {
+                    R.id.rbAddress -> {
+                        filteredList = arrayList.filter { element ->
+                            element.address?.contains(
+                                binding.etSearch.text.toString(),
+                                ignoreCase = true
+                            ) == true
+                        } as ArrayList<UserModel>
                     }
-                    else {
-                        var textLength = text?.length ?: 0
-                        if (textLength == 0) {
-                            showList.clear()
-                            showList.addAll(arrayList)
-                            adapter.notifyDataSetChanged()
-                        } else if (textLength > 2) {
-                            var filteredList = arrayList.filter { element ->
-                                element.name?.contains(
-                                    binding.etSearch.text.toString(),
-                                    true
-                                ) == true
-                            }
-                            showList.clear()
-                            showList.addAll(filteredList)
-                            adapter.notifyDataSetChanged()
-                        }
+                    R.id.rbName -> {
+                        filteredList = arrayList.filter { element ->
+                            element.name?.contains(
+                                binding.etSearch.text.toString(),
+                                ignoreCase = true
+                            ) == true
+                        } as ArrayList<UserModel>
                     }
-                }
-            }
-
-        }
-        binding.rbPhoneNo.setOnClickListener {
-            binding.etSearch.doOnTextChanged { text, start, before, count ->
-
-                binding.btnSearch.setOnClickListener {
-                    if (arrayList.count() == 0) {
-                        Toast.makeText(this, "Enter List", Toast.LENGTH_SHORT).show()
-                        binding.etSearch.error = "Enter List"
-                    }
-                    else {
-                        var textLength = text?.length ?: 0
-                        if (textLength == 0) {
-                            showList.clear()
-                            showList.addAll(arrayList)
-                            adapter.notifyDataSetChanged()
-                        } else if (textLength > 2) {
-                            var filteredList = arrayList.filter { element ->
-                                element.phoneNo?.contains(
-                                    binding.etSearch.text.toString(),
-                                    true
-                                ) == true
-                            }
-                            showList.clear()
-                            showList.addAll(filteredList)
-                            adapter.notifyDataSetChanged()
-                        }
+                    R.id.rbPhoneNo -> {
+                        filteredList = arrayList.filter { element ->
+                            element.phoneNo?.contains(
+                                binding.etSearch.text.toString(),
+                                ignoreCase = true
+                            ) == true
+                        } as ArrayList<UserModel>
                     }
                 }
+
+                showList.clear()
+                showList.addAll(filteredList)
+                adapter.notifyDataSetChanged()
             }
-
-        }
-        binding.rbAddress.setOnClickListener {
-            binding.etSearch.doOnTextChanged { text, start, before, count ->
-
-                binding.btnSearch.setOnClickListener {
-                    if (arrayList.count() == 0) {
-                        Toast.makeText(this, "Enter List", Toast.LENGTH_SHORT).show()
-                        binding.etSearch.error = "Enter List"
-                    }
-                    else {
-                        var textLength = text?.length ?: 0
-                        if (textLength == 0) {
-                            showList.clear()
-                            showList.addAll(arrayList)
-                            adapter.notifyDataSetChanged()
-                        } else if (textLength > 2) {
-                            var filteredList = arrayList.filter { element ->
-                                element.address?.contains(
-                                    binding.etSearch.text.toString(),
-                                    true
-                                ) == true
-                            }
-                            showList.clear()
-                            showList.addAll(filteredList)
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                }
-            }
-
         }
     }
 
     override fun click(position: Int) {
         showDialogView(position)
     }
+
     fun showDialogView(position: Int = -1){
         var dialog= Dialog(this)
         var dialogBinding= BtnNegativeDialogBinding.inflate(layoutInflater)
@@ -143,8 +100,9 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
             dialogBinding.btnUpdate.setText("Update")
             dialogBinding.etItemName.setText(arrayList[position].name)
             dialogBinding.etAddress.setText(arrayList[position].address)
-            dialogBinding.etPhonNo.setText(arrayList[position].phoneNo.toString())
+            dialogBinding.etPhonNo.setText(arrayList[position].phoneNo)
         }
+//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
@@ -159,16 +117,27 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
             else if(dialogBinding.etAddress.text.toString().trim().isNullOrEmpty()){
                 dialogBinding.etAddress.error="Enter Address"
             }
+            else if(dialogBinding.etPhonNo.length()<10){
+                dialogBinding.etPhonNo.error="Invalid Phone No."
+            }
             else if(dialogBinding.etPhonNo.text.toString().trim().isNullOrEmpty()){
                 dialogBinding.etPhonNo.error="Enter PhoneNo"
             }
             else {
-                if(position>-1) {
-                    arrayList[position] = UserModel(dialogBinding.etItemName.text.toString(),dialogBinding.etAddress.text.toString(),dialogBinding.etPhonNo.text.toString())
+                if(position > -1) {
+                    arrayList[position] = (UserModel(
+                        dialogBinding.etItemName.text.toString(),
+                        dialogBinding.etAddress.text.toString(),
+                        dialogBinding.etPhonNo.text.toString()
+                    ))
                 }
                 else{
+                    arrayList.add(UserModel(
+                        dialogBinding.etItemName.text.toString(),
+                        dialogBinding.etAddress.text.toString(),
+                        dialogBinding.etPhonNo.text.toString()
+                    ))
                     showList.clear()
-                    arrayList.add(UserModel(dialogBinding.etItemName.text.toString(),dialogBinding.etAddress.text.toString(),dialogBinding.etPhonNo.text.toString()))
                     showList.addAll(arrayList)
                 }
                 adapter.notifyDataSetChanged()
