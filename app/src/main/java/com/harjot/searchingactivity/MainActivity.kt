@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(),RecyclerInterface {
             } else if (arrayList.isNullOrEmpty()) {
                 Toast.makeText(this, "Empty List", Toast.LENGTH_SHORT).show()
                 binding.etSearch.setError("Add Item In list")
-            } else if (textLength > 2) {
+            } else if (textLength > 0) {
                 var filteredList = ArrayList<UserModel>()
                 when (binding.rg.checkedRadioButtonId) {
                     R.id.rbAddress -> {
